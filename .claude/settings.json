@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "msg=$(git fetch 2>&1; git pull --ff-only 2>&1); jq -n --arg m \"$msg\" '{systemMessage: (\"Git auto-sync (session start):\\n\" + $m)}'",
+            "timeout": 30,
+            "statusMessage": "Syncing with remote (git fetch + pull)..."
+          }
+        ]
+      }
+    ]
+  }
+}

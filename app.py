@@ -9,7 +9,7 @@ import threading
 import tkinter as tk
 from tkinter import ttk, scrolledtext
 
-from translator import (
+from api import (
     get_turkish_meaning,
     get_word_data,
     get_tatoeba_sentences,

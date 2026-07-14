@@ -49,15 +49,12 @@
 *INSTRUCTION FOR CLAUDE: After completing a significant feature or refactoring, read this section to understand project history. The ledger is auto-updated via git hooks. This keeps both team members in sync.*
 
 ### Backend State
-- [2026-07-14] Modified: .claude/settings.json, CLAUDE.md, api.py, app.py, translator.py, .claude/hooks/, .gitignore, backend/, frontend/
-- [2026-07-14] Modified: .claude/settings.json, CLAUDE.md, api.py, app.py, translator.py, .claude/hooks/, .gitignore, backend/
-- [2026-07-14] Modified: .claude/settings.json, CLAUDE.md, api.py, app.py, translator.py, .claude/hooks/, __pycache__/, backend/
+- [2026-07-14] Implemented: Team synchronization workflow with /backend and /frontend directory separation. Auto-ledger hook configured.
 - [2026-07-14] Refactored: API logic extracted to dedicated `api.py` module with type hints and docstrings. CLI and GUI both import from shared API module for consistency.
 - [2026-07-14] Initial: Created project structure with CLI (translator.py) and Tkinter GUI (app.py) using three translation/definition APIs.
 
 ### Frontend State
-- [2026-07-14] Modified: .claude/settings.json, CLAUDE.md, api.py, app.py, translator.py, .claude/hooks/, .gitignore, backend/, frontend/
-- [2026-07-14] Initialized: `/frontend` directory ready for implementation. Brother will build web interface here.
+- [2026-07-14] Initialized: `/frontend` directory with HTML template ready for implementation. Brother can build web interface here.
 
 ---
 

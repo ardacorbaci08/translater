@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingilizce Kelime Çevirmen</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #764ba2;
+        }
+
+        .result {
+            display: none;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .result h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .section {
+            margin-bottom: 15px;
+        }
+
+        .section-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .section-content {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .error {
+            color: #e74c3c;
+            padding: 12px;
+            background: #fadbd8;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Ingilizce Kelime Çevirmen</h1>
+
+        <div class="search-box">
+            <input
+                type="text"
+                id="wordInput"
+                placeholder="Enter an English word..."
+                autocomplete="off"
+            >
+            <button onclick="searchWord()">Search</button>
+        </div>
+
+        <div id="result" class="result">
+            <h2 id="word"></h2>
+
+            <div class="section">
+                <div class="section-title">Turkish Translation</div>
+                <div class="section-content" id="translation">-</div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Definition</div>
+                <div class="section-content" id="definition">-</div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Examples</div>
+                <div class="section-content" id="examples">-</div>
+            </div>
+        </div>
+
+        <div id="error" class="error" style="display: none;"></div>
+    </div>
+
+    <script>
+        const wordInput = document.getElementById('wordInput');
+        const resultDiv = document.getElementById('result');
+        const errorDiv = document.getElementById('error');
+
+        wordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') searchWord();
+        });
+
+        async function searchWord() {
+            const word = wordInput.value.trim();
+            if (!word) return;
+
+            resultDiv.classList.remove('show');
+            errorDiv.style.display = 'none';
+
+            try {
+                const response = await fetch(`/api/search?word=${encodeURIComponent(word)}`);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to search');
+                }
+
+                displayResult(data);
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        function displayResult(data) {
+            document.getElementById('word').textContent = data.word;
+            document.getElementById('translation').textContent = data.translation;
+
+            const definitions = data.definitions;
+            const defText = definitions.length
+                ? definitions.map(d => `• ${d}`).join('\n')
+                : '(tanim bulunamadi)';
+            document.getElementById('definition').textContent = defText;
+
+            const examples = data.examples;
+            const exText = examples.length
+                ? examples.map((ex, i) => `${i + 1}. ${ex}`).join('\n')
+                : '(ornek cumle bulunamadi)';
+            document.getElementById('examples').textContent = exText;
+
+            resultDiv.classList.add('show');
+        }
+
+        function showError(message) {
+            errorDiv.textContent = `Error: ${message}`;
+            errorDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

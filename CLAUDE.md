@@ -1,44 +1,127 @@
-# CLAUDE.md
+# 🧠 Project Core & Synchronization Protocol
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## [CRITICAL RULES - READ BEFORE EXECUTING ANY COMMAND]
 
-## What this is
+1. **Strict Isolation:**
+   - If your current task is related to the interface/frontend, ONLY modify files within the `/frontend` directory.
+   - If your current task is related to the server/backend logic, ONLY modify files within the `/backend` directory.
+   - DO NOT cross boundaries under any circumstances.
 
-A small Turkish-language English-word lookup tool ("Ingilizce Kelime Cevirmen"). Given an English word, it fetches:
-1. Turkish translation
-2. English dictionary definition(s)
-3. Up to 3 example sentences
+2. **Permission First:**
+   - Never install global dependencies or execute destructive commands (like dropping a database or deleting folders) without explicit user confirmation.
+   - Always ask before pushing to `main` branch; use `tolga` or feature branches by default.
 
-There are two entry points sharing the same core logic:
-- [translator.py](translator.py) — CLI (interactive REPL or single-word arg), with ANSI-colored terminal output.
-- [app.py](app.py) — Tkinter desktop GUI that imports and reuses the functions from `translator.py`, doing lookups on a background thread to keep the UI responsive.
+3. **Run & Test:**
+   - Do not commit or declare a task "done" without running a local test to verify the code compiles and functions.
+   - Test both CLI and GUI for backend changes; verify layout and responsiveness for frontend changes.
 
-No build system, package manifest, or test suite exists — this is plain-stdlib Python (only `urllib`, `json`, `tkinter`).
+---
 
-## Running
+## 🏗️ Architecture Layout
 
+### Backend (`/backend`)
+**Technology:** Python 3 (stdlib only: urllib, json, tkinter)
+- `api.py` — Core API interactions with external services (translation, dictionary, examples)
+- `translator.py` — CLI interface with ANSI-colored terminal output
+- `app.py` — Tkinter desktop GUI (imports shared logic from `api.py`)
+
+**Responsibilities:**
+- Fetch Turkish translations via Google Translate / MyMemory API
+- Fetch English definitions from Free Dictionary API
+- Fetch example sentences from Tatoeba
+- Handle all network requests and error fallbacks
+
+### Frontend (`/frontend`)
+**Technology:** HTML/CSS/JavaScript (to be implemented)
+- Web interface for the word lookup tool
+- Real-time search with backend integration
+- Responsive design for desktop and mobile
+
+**Responsibilities:**
+- User interface and interactions
+- Communication with backend API
+- Display lookup results (translations, definitions, examples)
+
+---
+
+## 🤝 The Handshake Ledger (Sync Log)
+
+*INSTRUCTION FOR CLAUDE: After completing a significant feature or refactoring, read this section to understand project history. The ledger is auto-updated via git hooks. This keeps both team members in sync.*
+
+### Backend State
+- [2026-07-14] Modified: .claude/settings.json, CLAUDE.md, api.py, app.py, translator.py, .claude/hooks/, .gitignore, backend/, frontend/
+- [2026-07-14] Modified: .claude/settings.json, CLAUDE.md, api.py, app.py, translator.py, .claude/hooks/, .gitignore, backend/
+- [2026-07-14] Modified: .claude/settings.json, CLAUDE.md, api.py, app.py, translator.py, .claude/hooks/, __pycache__/, backend/
+- [2026-07-14] Refactored: API logic extracted to dedicated `api.py` module with type hints and docstrings. CLI and GUI both import from shared API module for consistency.
+- [2026-07-14] Initial: Created project structure with CLI (translator.py) and Tkinter GUI (app.py) using three translation/definition APIs.
+
+### Frontend State
+- [2026-07-14] Modified: .claude/settings.json, CLAUDE.md, api.py, app.py, translator.py, .claude/hooks/, .gitignore, backend/, frontend/
+- [2026-07-14] Initialized: `/frontend` directory ready for implementation. Brother will build web interface here.
+
+---
+
+## 📋 Development Workflow
+
+### For Backend Changes (Python)
+1. Work only in `/backend`
+2. Test with: `python3 backend/translator.py serendipity` (CLI) and `python3 backend/app.py` (GUI)
+3. Commit to `tolga` branch
+4. Once tested, open a PR to `main`
+5. The `update-ledger.js` hook will auto-log your changes to this file
+
+### For Frontend Changes (HTML/CSS/JS)
+1. Work only in `/frontend`
+2. Test locally with a browser
+3. Commit to `tolga` branch (or your own feature branch)
+4. Once tested, open a PR to `main`
+5. The `update-ledger.js` hook will auto-log your changes to this file
+
+### Pushing to Main
+- Only push to `main` after both team members agree
+- Use `tolga` or feature branches for parallel work
+- Use PR reviews before merging to `main`
+
+---
+
+## 🔗 API Dependencies
+
+All requests use public APIs with no authentication:
+- **Google Translate** (unofficial endpoint)
+- **MyMemory Translation API** (fallback)
+- **Free Dictionary API** (definitions)
+- **Tatoeba** (example sentences)
+
+No API keys required. Graceful degradation if any service is down.
+
+---
+
+## 🚀 Running the Application
+
+### Backend (CLI)
 ```bash
-# CLI, interactive mode
-python3 translator.py
+# Interactive mode
+python3 backend/translator.py
 
-# CLI, single word
-python3 translator.py serendipity
-
-# GUI
-python3 app.py
+# Single word lookup
+python3 backend/translator.py serendipity
 ```
 
-No dependencies to install — everything used is in the Python standard library.
+### Backend (GUI)
+```bash
+python3 backend/app.py
+```
 
-## Architecture
+### Frontend
+```bash
+# Open frontend/index.html in a browser (coming soon)
+```
 
-All external API calls live in `translator.py` and are consumed by both entry points:
+---
 
-- `get_turkish_meaning(word)` — tries the unofficial Google Translate endpoint first (more consistent for single words), falls back to MyMemory API if that fails or returns nothing.
-- `get_word_data(word)` — hits the Free Dictionary API (`api.dictionaryapi.dev`) for definitions and any example sentences bundled with them.
-- `get_tatoeba_sentences(word)` — backfills example sentences from Tatoeba when the dictionary API provides fewer than 3.
-- `fetch_json(url)` — shared helper wrapping `urllib.request` with a spoofed User-Agent and 15s timeout.
+## 📝 Notes
 
-Each lookup function fails independently (each swallows/returns empty on error) so a single API being down doesn't break the whole lookup — both `translator.show_word()` and `app.py`'s `_do_search()` call all three and degrade gracefully, showing "(bulunamadi)"/"(tanim bulunamadi)" placeholders and collecting error messages to display rather than raising.
-
-`app.py`'s GUI mirrors `translator.py`'s CLI flow exactly (same three lookups, same fallback-to-Tatoeba-if-<3-examples logic) but renders into a `tkinter.scrolledtext.ScrolledText` widget with custom text tags instead of ANSI codes, and runs the network calls in a `threading.Thread` to avoid blocking the Tk main loop.
+- **No dependencies:** Backend uses only Python standard library
+- **Cross-platform:** Works on macOS, Windows, Linux
+- **Error handling:** Each API fails independently; app degrades gracefully
+- **Async:** Frontend will eventually make async calls to a backend API server

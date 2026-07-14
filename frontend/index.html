@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingilizce Kelime Cevirmen - English Word Lookup</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            padding: 12px 32px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #764ba2;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .results {
+            display: none;
+        }
+
+        .results.active {
+            display: block;
+        }
+
+        .word-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .section {
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #764ba2;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .section-content {
+            padding-left: 16px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .definition {
+            margin-bottom: 10px;
+            position: relative;
+            padding-left: 16px;
+        }
+
+        .definition::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .example {
+            margin-bottom: 12px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .example::before {
+            content: attr(data-index);
+            font-weight: 700;
+            color: #667eea;
+            margin-right: 8px;
+        }
+
+        .loading {
+            text-align: center;
+            color: #999;
+            padding: 20px;
+            display: none;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error.active {
+            display: block;
+        }
+
+        .placeholder {
+            text-align: center;
+            color: #999;
+            padding: 40px 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 English Word Lookup</h1>
+        <p class="subtitle">Find Turkish translations, definitions, and examples</p>
+
+        <div class="search-box">
+            <input type="text" id="wordInput" placeholder="Enter an English word..." />
+            <button onclick="searchWord()">Search</button>
+        </div>
+
+        <div id="error" class="error"></div>
+        <div id="loading" class="loading">Searching...</div>
+
+        <div id="results" class="results">
+            <div class="word-title" id="wordTitle"></div>
+
+            <div class="section">
+                <div class="section-title">Turkish Translation</div>
+                <div class="section-content" id="turkishMeaning"></div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">English Definition</div>
+                <div class="section-content" id="definitions"></div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Example Sentences</div>
+                <div class="section-content" id="examples"></div>
+            </div>
+        </div>
+
+        <div id="placeholder" class="placeholder">
+            Enter a word to get started
+        </div>
+    </div>
+
+    <script>
+        // TO BE IMPLEMENTED: Connect to backend API
+        // This frontend will make requests to a Python backend API server
+
+        function searchWord() {
+            const word = document.getElementById('wordInput').value.trim();
+            if (!word) return;
+
+            // TODO: Implement API call to backend
+            console.log('Searching for:', word);
+        }
+
+        document.getElementById('wordInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchWord();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,29 +1,20 @@
-# 🧠 Project Core & Synchronization Protocol
+# Project Core & Synchronization Protocol
 
-## [CRITICAL RULES - READ BEFORE EXECUTING ANY COMMAND]
+## Working rules
 
-1. **Strict Isolation:**
-   - If your current task is related to the interface/frontend, ONLY modify files within the `/frontend` directory.
-   - If your current task is related to the server/backend logic, ONLY modify files within the `/backend` directory.
-   - DO NOT cross boundaries under any circumstances.
-
-2. **Permission First:**
-   - Never install global dependencies or execute destructive commands (like dropping a database or deleting folders) without explicit user confirmation.
-   - Always ask before pushing to `main` branch; use `tolga` or feature branches by default.
-
-3. **Run & Test:**
-   - Do not commit or declare a task "done" without running a local test to verify the code compiles and functions.
-   - Test both CLI and GUI for backend changes; verify layout and responsiveness for frontend changes.
+1. **Stay on your side of the split.** Frontend tasks change only `/frontend`, and backend tasks change only `/backend`. The two halves are owned by different people, so a change that needs both sides gets raised first, not made.
+2. **Branches.** Work on `tolga` or a feature branch. Ask before pushing to `main`.
+3. **Test before done.** Backend changes: run both the CLI and the GUI. Frontend changes: check layout and responsiveness in a browser.
 
 ---
 
-## 🏗️ Architecture Layout
+## Architecture Layout
 
 ### Backend (`/backend`)
 **Technology:** Python 3 (stdlib only: urllib, json, tkinter)
-- `api.py` — Core API interactions with external services (translation, dictionary, examples)
-- `translator.py` — CLI interface with ANSI-colored terminal output
-- `app.py` — Tkinter desktop GUI (imports shared logic from `api.py`)
+- `api.py`: core API calls to the external services (translation, dictionary, examples)
+- `translator.py`: CLI interface with ANSI-colored terminal output
+- `app.py`: Tkinter desktop GUI, importing its shared logic from `api.py`
 
 **Responsibilities:**
 - Fetch Turkish translations via Google Translate / MyMemory API
@@ -44,9 +35,9 @@
 
 ---
 
-## 🤝 The Handshake Ledger (Sync Log)
+## The Handshake Ledger (Sync Log)
 
-*INSTRUCTION FOR CLAUDE: After completing a significant feature or refactoring, read this section to understand project history. The ledger is auto-updated via git hooks. This keeps both team members in sync.*
+Project history, auto-updated by `.claude/hooks/update-ledger.js` (it keys on the two `### ... State` headings below, so keep them verbatim). Read it to see what the other side has done.
 
 ### Backend State
 - [2026-07-14] Implemented: Team synchronization workflow with /backend and /frontend directory separation. Auto-ledger hook configured.
@@ -58,30 +49,16 @@
 
 ---
 
-## 📋 Development Workflow
+## Development Workflow
 
-### For Backend Changes (Python)
-1. Work only in `/backend`
-2. Test with: `python3 backend/translator.py serendipity` (CLI) and `python3 backend/app.py` (GUI)
-3. Commit to `tolga` branch
-4. Once tested, open a PR to `main`
-5. The `update-ledger.js` hook will auto-log your changes to this file
-
-### For Frontend Changes (HTML/CSS/JS)
-1. Work only in `/frontend`
-2. Test locally with a browser
-3. Commit to `tolga` branch (or your own feature branch)
-4. Once tested, open a PR to `main`
-5. The `update-ledger.js` hook will auto-log your changes to this file
-
-### Pushing to Main
-- Only push to `main` after both team members agree
-- Use `tolga` or feature branches for parallel work
-- Use PR reviews before merging to `main`
+1. Work only in your side's directory (`/backend` or `/frontend`).
+2. Test (see Running the Application below).
+3. Commit to `tolga` or your own feature branch. The ledger hook logs the change here.
+4. Open a PR to `main`. Merge only after both team members agree.
 
 ---
 
-## 🔗 API Dependencies
+## API Dependencies
 
 All requests use public APIs with no authentication:
 - **Google Translate** (unofficial endpoint)
@@ -89,36 +66,24 @@ All requests use public APIs with no authentication:
 - **Free Dictionary API** (definitions)
 - **Tatoeba** (example sentences)
 
-No API keys required. Graceful degradation if any service is down.
+No API keys required. Each API fails independently and the app degrades gracefully.
 
 ---
 
-## 🚀 Running the Application
+## Running the Application
 
-### Backend (CLI)
 ```bash
-# Interactive mode
-python3 backend/translator.py
-
-# Single word lookup
-python3 backend/translator.py serendipity
+python3 backend/translator.py              # CLI, interactive
+python3 backend/translator.py serendipity  # CLI, single word
+python3 backend/app.py                     # GUI
 ```
 
-### Backend (GUI)
-```bash
-python3 backend/app.py
-```
-
-### Frontend
-```bash
-# Open frontend/index.html in a browser (coming soon)
-```
+Frontend: open `frontend/index.html` in a browser (not built yet).
 
 ---
 
-## 📝 Notes
+## Notes
 
-- **No dependencies:** Backend uses only Python standard library
-- **Cross-platform:** Works on macOS, Windows, Linux
-- **Error handling:** Each API fails independently; app degrades gracefully
-- **Async:** Frontend will eventually make async calls to a backend API server
+- **No dependencies:** Backend uses only the Python standard library.
+- **Cross-platform:** Works on macOS, Windows, Linux.
+- **Async:** Frontend will eventually make async calls to a backend API server.
